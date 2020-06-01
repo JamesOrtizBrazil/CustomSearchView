@@ -1,0 +1,3 @@
+include ':customsearchview'
+include ':app'
+rootProject.name = "CustomSearchView"
