@@ -50,7 +50,6 @@ import java.util.Collection;
 
 public class CustomSearchView
         extends RevealViewGroup {
-    public static final int VOICE_RECOGNITION_CODE = 8185102;
     final static double COS_45 = Math.cos(Math.toRadians(45));
     private static final int[] RES_IDS_ACTION_BAR_SIZE = {R.attr.actionBarSize};
     private static final int DURATION_REVEAL_OPEN = 400;
@@ -95,6 +94,8 @@ public class CustomSearchView
     private ArrayList<SearchItem> mSearchSuggestions;
     private KeyboardView mCustomKeyboardView;
     private boolean showCustomKeyboard;
+
+    private TextWatcher maskWatcher;
 
     public CustomSearchView(Context context) {
         super(context);
@@ -1171,4 +1172,128 @@ public class CustomSearchView
             }
         };
     }
+
+    public void setInputType(int inputType) {
+        mSearchEditText.setInputType(inputType);
+    }
+
+    public void setCNPJCPFMask() {
+        //verificando se já existia uma máscara anterior, remove ela
+        if (maskWatcher != null) {
+            mSearchEditText.removeTextChangedListener(maskWatcher);
+        }
+
+        //criando a nova máscara
+        maskWatcher = new TextWatcher() {
+            private boolean mFormatting; // this is a flag which prevents the stack(onTextChanged)
+            private int mLastStartLocation;
+            private String mLastBeforeText;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                mLastStartLocation = start;
+                mLastBeforeText = s.toString();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //do nothing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!mFormatting) {
+                    mFormatting = true;
+                    int curPos = mLastStartLocation;
+                    String beforeValue = mLastBeforeText;
+                    String currentValue = s.toString();
+
+                    String formattedValue;
+                    StringBuilder formattedString = new StringBuilder();
+
+                    String mask;
+                    if (s.length() < 15) {
+                        mask = "###.###.###-##";
+                    } else {
+                        mask = "##.###.###/####-##";
+                    }
+
+                    int digits = mask.length();
+
+                    // Remove everything except digits
+                    int p = 0;
+                    while (p < s.length()) {
+                        char ch = s.charAt(p);
+                        if (!Character.isDigit(ch)) {
+                            s.delete(p, p + 1);
+                        } else {
+                            p++;
+                        }
+                    }
+
+                    // Now only digits are remaining
+                    String allDigitString = s.toString();
+
+                    int totalDigitCount = allDigitString.length();
+
+                    if (totalDigitCount > digits) {
+                        allDigitString = allDigitString.substring(0, digits);
+                        totalDigitCount--;
+                    }
+
+                    if (totalDigitCount == 0
+                            || totalDigitCount > digits) {
+                        // May be the total length of input length is greater than the
+                        // expected value so we'll remove all formatting
+                        s.clear();
+                        s.append(allDigitString);
+                        formattedValue = allDigitString;
+                    } else {
+                        int charMask = 0;
+                        int charString = 0;
+                        while (charMask < mask.length()) {
+                            char chMask = mask.charAt(charMask);
+
+                            if (charString < s.length()) {
+                                if (chMask == '#') {
+                                    formattedString.append(s.charAt(charString));
+                                    charString++;
+                                } else {
+                                    formattedString.append(chMask);
+                                }
+                            }
+                            charMask++;
+                        }
+
+                        s.clear();
+                        s.append(formattedString.toString());
+
+                        formattedValue = formattedString.toString();
+                    }
+
+                    if (currentValue.length() > beforeValue.length()) {
+                        int setCusorPos = formattedValue.length()
+                                - (beforeValue.length() - curPos);
+                        mSearchEditText.setSelection(Math.max(setCusorPos, 0));
+                    } else {
+                        int setCusorPos = formattedValue.length()
+                                - (currentValue.length() - curPos);
+                        if (setCusorPos > 0 && !Character.isDigit(formattedValue.charAt(setCusorPos - 1))) {
+                            setCusorPos--;
+                        }
+                        mSearchEditText.setSelection(Math.max(setCusorPos, 0));
+                    }
+                    mFormatting = false;
+                }
+            }
+        };
+        mSearchEditText.addTextChangedListener(maskWatcher);
+    }
+
+    public void removeMasks() {
+        if (maskWatcher != null) {
+            mSearchEditText.removeTextChangedListener(maskWatcher);
+        }
+    }
+
 }
