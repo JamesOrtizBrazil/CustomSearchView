@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -806,6 +807,8 @@ public class CustomSearchView
         ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(getApplicationWindowToken(), 0);
 
+
+        Log.i("teste", "teste");
 
        /* if (showCustomKeyboard && mCustomKeyboardView != null) {
             mCustomKeyboardView.setVisibility(View.GONE);
