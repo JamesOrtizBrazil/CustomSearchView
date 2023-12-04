@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.KeyboardView;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -732,6 +733,12 @@ public class CustomSearchView
         }
 
         mSearchEditText.setOnTouchListener(null);
+
+        new Handler().postDelayed(() -> {
+            InputMethodManager inputMethodManager = (InputMethodManager) getContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }, 500);
         InputMethodManager inputMethodManager = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         /*inputMethodManager.toggleSoftInputFromWindow(
