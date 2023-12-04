@@ -729,7 +729,7 @@ public class CustomSearchView
         if (getSearchText().length() > 0) {
             showClearButton();
         }
-        if (openKeyboard) {
+        /*if (openKeyboard) {
             if (showCustomKeyboard && mCustomKeyboardView != null) { // Show custom keyboard
                 mCustomKeyboardView.setVisibility(View.VISIBLE);
                 mCustomKeyboardView.setEnabled(true);
@@ -774,7 +774,7 @@ public class CustomSearchView
                         getApplicationWindowToken(),
                         InputMethodManager.SHOW_FORCED, 0);
             }
-        }
+        }*/
     }
 
     private void closeSearchInternal() {
@@ -795,13 +795,13 @@ public class CustomSearchView
     }
 
     private void hideKeyboard() {
-        if (showCustomKeyboard && mCustomKeyboardView != null) {
+       /* if (showCustomKeyboard && mCustomKeyboardView != null) {
             mCustomKeyboardView.setVisibility(View.GONE);
             mCustomKeyboardView.setEnabled(false);
         } else {
             ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                     .hideSoftInputFromWindow(getApplicationWindowToken(), 0);
-        }
+        }*/
     }
 
     public boolean isEditing() {
