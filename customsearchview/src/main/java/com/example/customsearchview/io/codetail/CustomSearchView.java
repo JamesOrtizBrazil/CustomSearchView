@@ -729,6 +729,14 @@ public class CustomSearchView
         if (getSearchText().length() > 0) {
             showClearButton();
         }
+
+        mSearchEditText.setOnTouchListener(null);
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(
+                getApplicationWindowToken(),
+                InputMethodManager.SHOW_FORCED, 0);
+
         /*if (openKeyboard) {
             if (showCustomKeyboard && mCustomKeyboardView != null) { // Show custom keyboard
                 mCustomKeyboardView.setVisibility(View.VISIBLE);
@@ -795,6 +803,9 @@ public class CustomSearchView
     }
 
     private void hideKeyboard() {
+        ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
+                .hideSoftInputFromWindow(getApplicationWindowToken(), 0);
+
        /* if (showCustomKeyboard && mCustomKeyboardView != null) {
             mCustomKeyboardView.setVisibility(View.GONE);
             mCustomKeyboardView.setEnabled(false);
