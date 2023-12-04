@@ -739,12 +739,13 @@ public class CustomSearchView
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }, 500);
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        //InputMethodManager inputMethodManager = (InputMethodManager) getContext()
+        //        .getSystemService(Context.INPUT_METHOD_SERVICE);
         /*inputMethodManager.toggleSoftInputFromWindow(
                 getApplicationWindowToken(),
                 InputMethodManager.SHOW_FORCED, 0);*/
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        //inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         /*if (openKeyboard) {
             if (showCustomKeyboard && mCustomKeyboardView != null) { // Show custom keyboard
