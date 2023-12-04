@@ -738,7 +738,7 @@ public class CustomSearchView
             InputMethodManager inputMethodManager = (InputMethodManager) getContext()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        }, 500);
+        }, 100);
 
         //InputMethodManager inputMethodManager = (InputMethodManager) getContext()
         //        .getSystemService(Context.INPUT_METHOD_SERVICE);
