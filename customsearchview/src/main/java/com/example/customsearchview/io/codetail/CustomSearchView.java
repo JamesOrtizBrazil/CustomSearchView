@@ -734,9 +734,10 @@ public class CustomSearchView
         mSearchEditText.setOnTouchListener(null);
         InputMethodManager inputMethodManager = (InputMethodManager) getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInputFromWindow(
+        /*inputMethodManager.toggleSoftInputFromWindow(
                 getApplicationWindowToken(),
-                InputMethodManager.SHOW_FORCED, 0);
+                InputMethodManager.SHOW_FORCED, 0);*/
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         /*if (openKeyboard) {
             if (showCustomKeyboard && mCustomKeyboardView != null) { // Show custom keyboard
