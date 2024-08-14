@@ -1,6 +1,7 @@
 package com.example.customsearchview.io.codetail;
 
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -94,8 +95,6 @@ public class CustomSearchView
     private SearchSuggestionsBuilder mSuggestionBuilder;
     private SearchItemAdapter mSearchItemAdapter;
     private ArrayList<SearchItem> mSearchSuggestions;
-    private KeyboardView mCustomKeyboardView;
-    private boolean showCustomKeyboard;
 
     private TextWatcher maskWatcher;
 
@@ -112,14 +111,6 @@ public class CustomSearchView
     public CustomSearchView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs);
-    }
-
-    public void setCustomKeyboardView(KeyboardView customKeyboardView) {
-        mCustomKeyboardView = customKeyboardView;
-    }
-
-    public void enableCustomKeyboardView(boolean enable) {
-        showCustomKeyboard = enable;
     }
 
     static float calculateVerticalPadding(CardView cardView) {
@@ -158,7 +149,7 @@ public class CustomSearchView
             return 0;
         }
 
-        TypedArray att = curTheme.obtainStyledAttributes(RES_IDS_ACTION_BAR_SIZE);
+        @SuppressLint("ResourceType") TypedArray att = curTheme.obtainStyledAttributes(RES_IDS_ACTION_BAR_SIZE);
         if (att == null) {
             return 0;
         }
@@ -279,46 +270,30 @@ public class CustomSearchView
             }
 
         });*/
-        mLogoView.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dispatchStateChange(SearchViewState.EDITING); // This would call when state is wrong.
-            }
-
+        mLogoView.setOnClickListener(v -> {
+            dispatchStateChange(SearchViewState.EDITING); // This would call when state is wrong.
         });
-        mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId,
-                                          KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    clearSuggestions();
-                    fromEditingToSearch(true, false);
-                    return true;
-                }
-                return false;
+        mSearchEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                clearSuggestions();
+                fromEditingToSearch(true, false);
+                return true;
             }
+            return false;
         });
-        mSearchEditText.setOnKeyListener(new OnKeyListener() {
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                    clearSuggestions();
-                    fromEditingToSearch(true, false);
-                    return true;
-                } else if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    return mSearchListener != null && mSearchListener.onSearchEditBackPressed();
-                }
-                return false;
+        mSearchEditText.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                clearSuggestions();
+                fromEditingToSearch(true, false);
+                return true;
+            } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                return mSearchListener != null && mSearchListener.onSearchEditBackPressed();
             }
+            return false;
         });
         micStateChanged();
-        mMicButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                micClick();
-            }
-        });
+        mMicButton.setOnClickListener(v -> micClick());
         mSearchEditText.addTextChangedListener(new TextWatcher() {
-
             @Override
             public void afterTextChanged(Editable s) {
                 if (!mAvoidTriggerTextWatcher) {
@@ -342,11 +317,8 @@ public class CustomSearchView
             @Override
             public void onTextChanged(CharSequence s, int start, int before,
                                       int count) {
-
             }
-
         });
-
     }
 
     private void setUpLayoutTransition() {
@@ -354,7 +326,6 @@ public class CustomSearchView
         LayoutTransition layoutTransition = new LayoutTransition();
         layoutTransition.setDuration(DURATION_LAYOUT_TRANSITION);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            // layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
             layoutTransition.enableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
             layoutTransition.setStartDelay(LayoutTransition.CHANGING, 0);
         }
@@ -441,7 +412,6 @@ public class CustomSearchView
      * Hide the PersistentSearchView using the circle animation. Can be called regardless of result list length
      */
     private void hideCircularly(int x, int y) {
-
         Resources r = getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 96,
                 r.getDisplayMetrics());
@@ -454,29 +424,23 @@ public class CustomSearchView
         animator.setDuration(DURATION_REVEAL_CLOSE);
         animator.start();
         animator.addListener(new SupportAnimator.AnimatorListener() {
-
             @Override
             public void onAnimationStart() {
-
             }
 
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
                 closeSearchInternal();
-                // closeSearch();
             }
 
             @Override
             public void onAnimationCancel() {
-
             }
 
             @Override
             public void onAnimationRepeat() {
-
             }
-
         });
     }
 
@@ -739,72 +703,14 @@ public class CustomSearchView
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }, 100);
-
-        //InputMethodManager inputMethodManager = (InputMethodManager) getContext()
-        //        .getSystemService(Context.INPUT_METHOD_SERVICE);
-        /*inputMethodManager.toggleSoftInputFromWindow(
-                getApplicationWindowToken(),
-                InputMethodManager.SHOW_FORCED, 0);*/
-        //inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-
-        /*if (openKeyboard) {
-            if (showCustomKeyboard && mCustomKeyboardView != null) { // Show custom keyboard
-                mCustomKeyboardView.setVisibility(View.VISIBLE);
-                mCustomKeyboardView.setEnabled(true);
-
-                // Enable cursor, but still prevent default keyboard from showing up
-                OnTouchListener otl = new OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                mCustomKeyboardView.setVisibility(View.VISIBLE);
-                                mCustomKeyboardView.setEnabled(true);
-                                Layout layout = ((EditText) v).getLayout();
-                                float x = event.getX() + mSearchEditText.getScrollX();
-                                int offset = layout.getOffsetForHorizontal(0, x);
-                                if (offset > 0)
-                                    if (x > layout.getLineMax(0))
-                                        mSearchEditText.setSelection(offset);     // Touch was at the end of the text
-                                    else
-                                        mSearchEditText.setSelection(offset - 1);
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                layout = ((EditText) v).getLayout();
-                                x = event.getX() + mSearchEditText.getScrollX();
-                                offset = layout.getOffsetForHorizontal(0, x);
-                                if (offset > 0)
-                                    if (x > layout.getLineMax(0))
-                                        mSearchEditText.setSelection(offset);     // Touch point was at the end of the text
-                                    else
-                                        mSearchEditText.setSelection(offset - 1);
-                                break;
-                        }
-                        return true;
-                    }
-                };
-                mSearchEditText.setOnTouchListener(otl);
-            } else { // Show default keyboard
-                mSearchEditText.setOnTouchListener(null);
-                InputMethodManager inputMethodManager = (InputMethodManager) getContext()
-                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInputFromWindow(
-                        getApplicationWindowToken(),
-                        InputMethodManager.SHOW_FORCED, 0);
-            }
-        }*/
     }
 
     private void closeSearchInternal() {
         this.mLogoView.setVisibility(View.VISIBLE);
         this.mSearchEditText.setVisibility(View.GONE);
-        // if(mDisplayMode == DISPLAY_MODE_AS_TOOLBAR) {
+
         mSuggestionListView.setVisibility(View.GONE);
-        // }
-        // this.mSuggestionListView.setVisibility(View.GONE);
-        /*if (mTintView != null && mRootLayout != null) {
-            mRootLayout.removeView(mTintView);
-        }*/
+
         if (mSearchListener != null)
             mSearchListener.onSearchEditClosed();
         showMicButton();
@@ -815,17 +721,6 @@ public class CustomSearchView
     private void hideKeyboard() {
         ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(getApplicationWindowToken(), 0);
-
-
-        Log.i("teste", "teste");
-
-       /* if (showCustomKeyboard && mCustomKeyboardView != null) {
-            mCustomKeyboardView.setVisibility(View.GONE);
-            mCustomKeyboardView.setEnabled(false);
-        } else {
-            ((InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
-                    .hideSoftInputFromWindow(getApplicationWindowToken(), 0);
-        }*/
     }
 
     public boolean isEditing() {
@@ -938,16 +833,12 @@ public class CustomSearchView
     }
 
     private void fromEditingToSearch(boolean forceSearch, boolean avoidSearch) {
-        /*if(TextUtils.isEmpty(getSearchText())) {
-            fromEditingToNormal();
-        } else {*/
         setCurrentState(SearchViewState.SEARCH);
         if ((!getSearchText().equals(mLogoView.getText()) || forceSearch) && !avoidSearch) {
             search();
         }
         closeSearchInternal();
         mHomeButton.animateState(mHomeButtonSearchIconState);
-        /*}*/
     }
 
     private void dispatchStateChange(SearchViewState targetState) {

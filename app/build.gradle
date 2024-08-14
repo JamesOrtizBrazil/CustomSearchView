@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.customsearchview"
-        minSdkVersion 14
-        targetSdkVersion 31
+        minSdkVersion 16
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -23,4 +23,6 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }
